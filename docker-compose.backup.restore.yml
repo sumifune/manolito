@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  db-backup:
+    image: alpine
+    tty: false
+    environment:
+      - TARGET=db_data
+    volumes:
+      - ./backup:/backup
+      # - db_data:/volume
+      - db_data:/data/db
+    command: sh -c "tar -cjf /backup/$${TARGET}.tar.bz2 -C /data/db ./"
+
+  db-restore:
+    image: alpine
+    environment:
+      - SOURCE=db_data
+    volumes:
+      - ./backup:/backup
+      # - db_data:/volume
+      - db_data:/data/db
+    command: sh -c "rm -rf /data/db/* /data/db/..?* /data/db/.[!.]* ; tar -C /data/db/ -xjf /backup/$${SOURCE}.tar.bz2"

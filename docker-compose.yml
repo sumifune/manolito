@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  api_manolito:
+    build:
+      context: .
+      dockerfile: Dockerfile.main
+    volumes:
+      # Local app folder is mounted to the container
+      - .:/usr/src/app
+      # node_modules that are installed inside the container during
+      # the build will not be overridden by your current folder.
+      - /usr/src/app/node_modules
+    container_name: api_manolito
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=db_manolito
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_DB
+    # ports:
+    # - "3000:3000"
+    networks:
+      - default
+    # command: ["./wait-for.sh", "db_manolito:27017", "--", "npm", "start" ]
+    command: ["./wait-for.sh", "db_manolito:27017", "--", "npm",  "run", "start:dev" ]
+
+  db_manolito:
+    image: mongo:4.1.8-xenial
+    container_name: db_manolito
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    # ports:
+      # - "81:27017"
+    volumes:
+      - db_data:/data/db
+    networks:
+      - default
+
+volumes:
+  db_data:
+
+# networks:
+#   network_manolito:
+#     external:
+#       name: network_manolito
+
+networks:
+  default:
+    external:
+      name: vps-net

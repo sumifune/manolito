@@ -1,0 +1,47 @@
+Logging into Mongo a container
+------------------------------
+
+dbash into the container
+
+A password containing special characters, especially the dollar sign, has to be put in single quotes to protect them from the command shell:
+
+$ mongo admin -u uname -p 'password'
+
+To prevent exposing password to bash history,
+use:
+
+mongo admin -u uname -p which will prompt you the password
+
+
+
+		En el caso de manolito.com:
+
+			username = sumifune
+			password = 123456
+
+
+
+https://stackoverflow.com/questions/15272521/command-line-authentication-of-mongo-fails
+
+
+List all users with format
+--------------------------
+
+https://blog.e-zest.com/basic-commands-for-mongodb
+
+db.users.find().pretty();
+
+Update and push an ObjectId into an array
+-----------------------------------------
+
+https://kb.objectrocket.com/mongo-db/how-to-add-elements-into-an-array-in-mongodb-1195
+
+db.users.update(
+	{"username": "pepito"},
+	{
+		$push: {
+			"roles": ObjectId("123...")
+		}
+	}
+
+);
